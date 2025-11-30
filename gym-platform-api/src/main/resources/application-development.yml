@@ -1,0 +1,5 @@
+postgres:
+  username: gym_user
+  password: gym_password
+  schema: gym_platform
+  url: localhost:5432

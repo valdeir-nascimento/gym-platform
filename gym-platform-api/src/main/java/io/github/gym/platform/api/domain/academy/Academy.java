@@ -7,27 +7,27 @@ import java.time.Instant;
 
 public class Academy extends AggregateRoot<AcademyID> {
 
-    private final String name;
-    private final String cnpj;
-    private final String phone;
-    private final String email;
-    private final String address;
-    private final boolean active;
-    private final Instant createdAt;
-    private final Instant updatedAt;
+    private String name;
+    private String cnpj;
+    private String phone;
+    private String email;
+    private String address;
+    private boolean active;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     private Academy(
-            final AcademyID id,
-            final String name,
-            final String cnpj,
-            final String phone,
-            final String email,
-            final String address,
-            final boolean active,
-            final Instant createdAt,
-            final Instant updatedAt
+        final AcademyID id,
+        final String name,
+        final String cnpj,
+        final String phone,
+        final String email,
+        final String address,
+        final boolean active,
+        final Instant createdAt,
+        final Instant updatedAt
     ) {
-        super(id); // nenhuma validação aqui, tudo vai para o Validator
+        super(id);
         this.name = name;
         this.cnpj = cnpj;
         this.phone = phone;
@@ -38,65 +38,75 @@ public class Academy extends AggregateRoot<AcademyID> {
         this.updatedAt = updatedAt;
     }
 
-    /**
-     * Factory method to create a brand new Academy.
-     */
     public static Academy newAcademy(
-            final String name,
-            final String cnpj,
-            final String phone,
-            final String email,
-            final String address
+        final String name,
+        final String cnpj,
+        final String phone,
+        final String email,
+        final String address
     ) {
         final var now = Instant.now();
         final var id = AcademyID.unique();
 
         return new Academy(
-                id,
-                name,
-                cnpj,
-                phone,
-                email,
-                address,
-                true,   // new academies start as active by default
-                now,
-                now
+            id,
+            name,
+            cnpj,
+            phone,
+            email,
+            address,
+            true,
+            now,
+            now
         );
     }
 
-    /**
-     * Factory method to rehydrate an existing Academy from persistence.
-     */
     public static Academy with(
-            final AcademyID id,
-            final String name,
-            final String cnpj,
-            final String phone,
-            final String email,
-            final String address,
-            final boolean active,
-            final Instant createdAt,
-            final Instant updatedAt
+        final AcademyID id,
+        final String name,
+        final String cnpj,
+        final String phone,
+        final String email,
+        final String address,
+        final boolean active,
+        final Instant createdAt,
+        final Instant updatedAt
     ) {
         return new Academy(
-                id,
-                name,
-                cnpj,
-                phone,
-                email,
-                address,
-                active,
-                createdAt,
-                updatedAt
+            id,
+            name,
+            cnpj,
+            phone,
+            email,
+            address,
+            active,
+            createdAt,
+            updatedAt
         );
+    }
+
+    public Academy update(
+        final String name,
+        final String cnpj,
+        final String phone,
+        final String email,
+        final String address,
+        final boolean active
+    ) {
+        this.name = name;
+        this.cnpj = cnpj;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.active = active;
+        this.updatedAt = Instant.now();
+        return this;
     }
 
     @Override
     public void validate(final ValidationHandler handler) {
         new AcademyValidator(this, handler).validate();
     }
-
-    // Getters (somente leitura, mantendo o agregado imutável)
 
     public String getName() {
         return name;
