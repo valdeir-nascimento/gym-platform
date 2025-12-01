@@ -52,7 +52,6 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         final var now = Instant.now();
         final var id = UserAccountID.unique();
 
-        // Aqui NÃO tem default. Se vier null/vazio, o Validator quebra.
         final var effectiveRoles = roles != null ? Set.copyOf(roles) : Set.<UserRole>of();
 
         return new UserAccount(
