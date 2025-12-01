@@ -44,17 +44,32 @@ management:
       export:
         enabled: true
 
-pix:
-  wallet:
-    security:
+security:
+  auth:
+    jwt:
+      issuer: gym-platform-api
+      secret: ${JWT_SECRET:da960d0f49a24688ad5cc5a3e787fd03da960d0f49a24688ad5cc5a3e787fd03}
+      expirationMinutes: 120
+    bootstrap:
       enabled: true
-      jwt:
-        secret: ${JWT_SECRET:fd66eb24-2954-4105-a239-865288102cf9fd66eb24-2954-4105-a239-865288102cf9}
-        expirationMinutes: 60
-      bootstrapUser:
-        enabled: true
-        username: admin
-        password: admin123
-        roles:
-          - ADMIN
-          - OPERATOR
+      fullName: Gym Admin
+      email: admin@gym.io
+      password: changeit
+      roles:
+        - ADMIN
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+      - http://127.0.0.1:4200
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+    allow-credentials: true

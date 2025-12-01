@@ -22,7 +22,7 @@ public class AcademyEntity {
     @Column(name = "cnpj", length = 18, unique = true)
     private String cnpj;
 
-    @Column(name = "phone", length = 20)
+    @Column(name = "phone", length = 20, unique = true)
     private String phone;
 
     @Column(name = "email", length = 150)

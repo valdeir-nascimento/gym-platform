@@ -14,5 +14,8 @@ CREATE TABLE academy
 CREATE UNIQUE INDEX ux_academy_cnpj
     ON academy (cnpj) WHERE cnpj IS NOT NULL;
 
+CREATE UNIQUE INDEX ux_academy_phone
+    ON academy (phone) WHERE phone IS NOT NULL;
+
 CREATE INDEX idx_academy_name
     ON academy (name);

@@ -18,7 +18,7 @@ public class AcademyValidator extends Validator {
 
     // Regex simples para email
     private static final Pattern SIMPLE_EMAIL_PATTERN =
-            Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+        Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     private final Academy academy;
 
@@ -61,8 +61,8 @@ public class AcademyValidator extends Validator {
         final int length = trimmed.length();
         if (length < NAME_MIN_LENGTH || length > NAME_MAX_LENGTH) {
             validationHandler().append(Error.of(
-                    "'name' must be between %d and %d characters"
-                            .formatted(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
+                "'name' must be between %d and %d characters"
+                    .formatted(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
             ));
         }
     }
@@ -78,7 +78,7 @@ public class AcademyValidator extends Validator {
 
         if (trimmed.length() > CNPJ_MAX_LENGTH) {
             validationHandler().append(Error.of(
-                    "'cnpj' must not be longer than %d characters".formatted(CNPJ_MAX_LENGTH)
+                "'cnpj' must not be longer than %d characters".formatted(CNPJ_MAX_LENGTH)
             ));
             return;
         }
@@ -99,7 +99,7 @@ public class AcademyValidator extends Validator {
 
         if (trimmed.length() > PHONE_MAX_LENGTH) {
             validationHandler().append(Error.of(
-                    "'phone' must not be longer than %d characters".formatted(PHONE_MAX_LENGTH)
+                "'phone' must not be longer than %d characters".formatted(PHONE_MAX_LENGTH)
             ));
         }
     }
@@ -115,7 +115,7 @@ public class AcademyValidator extends Validator {
 
         if (trimmed.length() > EMAIL_MAX_LENGTH) {
             validationHandler().append(Error.of(
-                    "'email' must not be longer than %d characters".formatted(EMAIL_MAX_LENGTH)
+                "'email' must not be longer than %d characters".formatted(EMAIL_MAX_LENGTH)
             ));
         }
 
@@ -135,24 +135,18 @@ public class AcademyValidator extends Validator {
 
         if (trimmed.length() > ADDRESS_MAX_LENGTH) {
             validationHandler().append(Error.of(
-                    "'address' must not be longer than %d characters".formatted(ADDRESS_MAX_LENGTH)
+                "'address' must not be longer than %d characters".formatted(ADDRESS_MAX_LENGTH)
             ));
         }
     }
 
-    /**
-     * Validação de CNPJ com base no algoritmo oficial (dígitos verificadores).
-     */
     private boolean isValidCnpj(final String cnpjRaw) {
-        // Mantém apenas dígitos
         final var digitsOnly = cnpjRaw.replaceAll("\\D", "");
 
-        // CNPJ deve ter 14 dígitos
         if (digitsOnly.length() != 14) {
             return false;
         }
 
-        // Rejeita sequências com todos os dígitos iguais (ex.: 000... / 111... / etc.)
         if (digitsOnly.chars().distinct().count() == 1) {
             return false;
         }
