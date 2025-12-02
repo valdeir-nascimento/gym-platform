@@ -9,3 +9,4 @@ public record ListPlansByAcademyQuery(String academyId) {
 
 
 
+
