@@ -4,7 +4,7 @@ import io.github.gym.platform.api.application.member.register.RegisterMemberUseC
 import io.github.gym.platform.api.application.member.register.command.RegisterMemberCommand;
 import io.github.gym.platform.api.application.member.retrieve.ListMembersUseCase;
 import io.github.gym.platform.api.application.member.retrieve.query.ListMembersQuery;
-import io.github.gym.platform.api.infrastructure.security.annotation.AdminOrTeacherOnly;
+import io.github.gym.platform.api.infrastructure.security.annotation.RoleAdminOrTeacher;
 import io.github.gym.platform.api.presentation.rest.controller.member.request.RegisterMemberRequest;
 import io.github.gym.platform.api.presentation.rest.controller.member.response.MemberResponse;
 import io.github.gym.platform.api.presentation.rest.helper.ApiUriFactory;
@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @GetMapping
-    @AdminOrTeacherOnly
+    @RoleAdminOrTeacher
     public ResponseEntity<List<MemberResponse>> listMembers(@RequestParam(required = false) final String academyId) {
         final var outputs = listMembersUseCase.execute(ListMembersQuery.with(academyId));
         final var response = outputs.stream().map(MemberResponse::from).toList();

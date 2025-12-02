@@ -14,7 +14,7 @@ import io.github.gym.platform.api.presentation.rest.controller.academy.request.U
 import io.github.gym.platform.api.presentation.rest.helper.ApiUriFactory;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import io.github.gym.platform.api.infrastructure.security.annotation.AdminOrTeacherOnly;
+import io.github.gym.platform.api.infrastructure.security.annotation.RoleAdminOrTeacher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +61,7 @@ public class AcademyController {
     }
 
     @GetMapping("/{academyId}")
-    @AdminOrTeacherOnly
+    @RoleAdminOrTeacher
     public ResponseEntity<AcademyOutput> getAcademyById(@PathVariable final String academyId) {
         final var query = GetAcademyByIdQuery.with(academyId);
         final var output = getAcademyByIdUseCase.execute(query);
@@ -69,7 +69,7 @@ public class AcademyController {
     }
 
     @GetMapping("/cnpj/{cnpj}")
-    @AdminOrTeacherOnly
+    @RoleAdminOrTeacher
     public ResponseEntity<AcademyOutput> getAcademyByCnpj(@PathVariable final String cnpj) {
         final var query = GetAcademyByCnpjQuery.with(cnpj);
         final var output = getAcademyByCnpjUseCase.execute(query);

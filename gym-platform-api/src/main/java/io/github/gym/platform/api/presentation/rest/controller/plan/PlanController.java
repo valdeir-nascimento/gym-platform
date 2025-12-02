@@ -7,7 +7,7 @@ import io.github.gym.platform.api.application.plan.retrieve.GetPlanByIdUseCase;
 import io.github.gym.platform.api.application.plan.retrieve.ListPlansByAcademyUseCase;
 import io.github.gym.platform.api.application.plan.retrieve.query.GetPlanByIdQuery;
 import io.github.gym.platform.api.application.plan.retrieve.query.ListPlansByAcademyQuery;
-import io.github.gym.platform.api.infrastructure.security.annotation.AdminOrTeacherOnly;
+import io.github.gym.platform.api.infrastructure.security.annotation.RoleAdminOrTeacher;
 import io.github.gym.platform.api.presentation.rest.controller.plan.request.CreatePlanRequest;
 import io.github.gym.platform.api.presentation.rest.helper.ApiUriFactory;
 import jakarta.validation.Valid;
@@ -52,14 +52,14 @@ public class PlanController {
     }
 
     @GetMapping("/{planId}")
-    @AdminOrTeacherOnly
+    @RoleAdminOrTeacher
     public ResponseEntity<PlanOutput> getPlan(@PathVariable final String planId) {
         final var output = getPlanByIdUseCase.execute(GetPlanByIdQuery.with(planId));
         return ResponseEntity.ok(output);
     }
 
     @GetMapping("/academy/{academyId}")
-    @AdminOrTeacherOnly
+    @RoleAdminOrTeacher
     public ResponseEntity<List<PlanOutput>> listPlansByAcademy(@PathVariable final String academyId) {
         final var output = listPlansByAcademyUseCase.execute(ListPlansByAcademyQuery.with(academyId));
         return ResponseEntity.ok(output);
