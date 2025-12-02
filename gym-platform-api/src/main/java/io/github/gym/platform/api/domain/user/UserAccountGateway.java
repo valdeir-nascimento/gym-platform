@@ -9,5 +9,7 @@ public interface UserAccountGateway {
     Optional<UserAccount> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    Optional<UserAccount> findById(UserAccountID id);
 }
 

@@ -1,7 +1,9 @@
 spring:
   profiles:
     active: development
- 
+  logging:
+    level:
+      org.springframework.security: DEBUG
   datasource:
     url: jdbc:postgresql://${postgres.url}/${postgres.schema}
     username: ${postgres.username}
