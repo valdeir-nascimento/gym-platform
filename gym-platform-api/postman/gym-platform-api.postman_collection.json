@@ -1,0 +1,245 @@
+{
+  "info": {
+    "name": "Gym Platform API",
+    "_postman_id": "c6db5b8f-2d4b-4d6e-8e5a-7d5c2d0f5a8a",
+    "description": "Coleção para validar os fluxos de autenticação e academias da Gym Platform API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Gym Admin\",\n  \"email\": \"admin@gym.io\",\n  \"phone\": \"+5511999999999\",\n  \"password\": \"changeit\",\n  \"roles\": [\"ADMIN\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.accessToken) {",
+                  "    pm.collectionVariables.set(\"accessToken\", json.accessToken);",
+                  "}",
+                  "if (json.expiresAt) {",
+                  "    pm.collectionVariables.set(\"tokenExpiresAt\", json.expiresAt);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gym.io\",\n  \"password\": \"changeit\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Academies",
+      "item": [
+        {
+          "name": "Create Academy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Academia Central\",\n  \"cnpj\": \"12.345.678/0001-90\",\n  \"phone\": \"+551140001111\",\n  \"email\": \"contato@academia.com\",\n  \"address\": \"Rua Principal, 1000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/academies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "academies"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academy by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/academies/{{academyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "academies",
+                "{{academyId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academy by CNPJ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/academies/cnpj/{{cnpj}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "academies",
+                "cnpj",
+                "{{cnpj}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academy",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Academia Central\",\n  \"cnpj\": \"12.345.678/0001-90\",\n  \"phone\": \"+551140001111\",\n  \"email\": \"contato@academia.com\",\n  \"address\": \"Rua Principal, 1000\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/academies/{{academyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "academies",
+                "{{academyId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "academyId",
+      "value": ""
+    },
+    {
+      "key": "cnpj",
+      "value": ""
+    },
+    {
+      "key": "tokenExpiresAt",
+      "value": ""
+    }
+  ]
+}
+
