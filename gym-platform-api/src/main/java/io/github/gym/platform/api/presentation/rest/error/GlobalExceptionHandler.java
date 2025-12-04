@@ -32,10 +32,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthenticationException(final AuthenticationException ex) {
-        final ApiError apiError = new ApiError(
-            "Authentication failed",
-            ex.getErrors()
-        );
+        final List<Error> errors = ex.getErrors() == null || ex.getErrors().isEmpty()
+            ? List.of(Error.of("Authentication failed"))
+            : ex.getErrors();
+
+        final ApiError apiError = new ApiError(errors);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
@@ -46,22 +47,24 @@ public class GlobalExceptionHandler {
             .stream()
             .map(GlobalExceptionHandler::toDomainError)
             .toList();
-        final ApiError apiError = new ApiError("Validation Error", errors);
+
+        final ApiError apiError = new ApiError(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
     @ExceptionHandler(OptimisticLockException.class)
     public ResponseEntity<ApiError> handleOptimisticLock(OptimisticLockException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(new ApiError("Concurrency error, try again",
-                List.of(Error.of(ex.getMessage()))));
+        // Mensagem amigável única, sem duplicação
+        final var apiError = new ApiError(
+            List.of(Error.of("Concurrency error, try again"))
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrityViolation(final DataIntegrityViolationException ex) {
         final String message = resolveConstraintMessage(ex);
         final ApiError apiError = new ApiError(
-            message,
             List.of(Error.of(message))
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
@@ -70,7 +73,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiError> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
         final var message = String.format("Required request parameter '%s' is missing", ex.getParameterName());
-        final var apiError = new ApiError("Missing Request Parameter", List.of(Error.of(message)));
+        final var apiError = new ApiError(List.of(Error.of(message)));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 

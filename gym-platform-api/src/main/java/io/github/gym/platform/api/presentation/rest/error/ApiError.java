@@ -1,28 +1,18 @@
 package io.github.gym.platform.api.presentation.rest.error;
 
-import io.github.gym.platform.api.domain.validation.Error;
 import io.github.gym.platform.api.domain.exception.DomainException;
 import io.github.gym.platform.api.domain.exception.NotFoundException;
+import io.github.gym.platform.api.domain.validation.Error;
 
 import java.util.List;
 
-public record ApiError(String message, List<Error> errors) {
+public record ApiError(List<Error> errors) {
+
     static ApiError from(final DomainException ex) {
-        final String message = extractMessage(ex);
-        return new ApiError(message, ex.getErrors());
+        return new ApiError(ex.getErrors());
     }
 
     static ApiError from(final NotFoundException ex) {
-        return new ApiError(ex.getMessage(), List.of(new Error(ex.getMessage())));
-    }
-
-    private static String extractMessage(final DomainException ex) {
-        if (ex.getMessage() != null && !ex.getMessage().isBlank()) {
-            return ex.getMessage();
-        }
-        if (ex.getErrors() != null && !ex.getErrors().isEmpty()) {
-            return ex.getErrors().get(0).message();
-        }
-        return "Unexpected error";
+        return new ApiError(List.of(Error.of(ex.getMessage())));
     }
 }
