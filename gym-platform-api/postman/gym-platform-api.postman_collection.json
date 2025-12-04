@@ -2,7 +2,7 @@
   "info": {
     "name": "Gym Platform API",
     "_postman_id": "c6db5b8f-2d4b-4d6e-8e5a-7d5c2d0f5a8a",
-    "description": "Coleção para validar os fluxos de autenticação e academias da Gym Platform API.",
+    "description": "Coleção para validar os fluxos de autenticação, academias, alunos e professores da Gym Platform API.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -21,7 +21,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Gym Admin\",\n  \"email\": \"admin@gym.io\",\n  \"phone\": \"+5511999999999\",\n  \"password\": \"changeit\",\n  \"roles\": [\"ADMIN\"]\n}"
+              "raw": "{\n  \"fullName\": \"Gym Admin\",\n  \"email\": \"admin@gym.io\",\n  \"phone\": \"+5511999999999\",\n  \"cpf\": \"11122233344\",\n  \"birthDate\": \"1985-05-20\",\n  \"password\": \"changeit\",\n  \"roles\": [\"ADMIN\"]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/v1/auth/register",
@@ -139,6 +139,35 @@
           }
         },
         {
+          "name": "List Academies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/academies?active={{active}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "academies"
+              ],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "{{active}}",
+                  "description": "Opcional: filtra academias ativas/inativas"
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "Get Academy by Id",
           "request": {
             "method": "GET",
@@ -217,6 +246,262 @@
           }
         }
       ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "List Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Lucas Carvalho\",\n  \"email\": \"lucas.carvalho@gym.io\",\n  \"phone\": \"+5511988880000\",\n  \"cpf\": \"12345678909\",\n  \"birthDate\": \"1995-03-18\",\n  \"planId\": \"{{planId}}\",\n  \"password\": \"aluno123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Member By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/members/{{memberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "members",
+                "{{memberId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Member",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Lucas Carvalho\",\n  \"email\": \"lucas.alterado@gym.io\",\n  \"phone\": \"+5511988880000\",\n  \"cpf\": \"12345678909\",\n  \"birthDate\": \"1995-03-18\",\n  \"planId\": \"{{planId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/members/{{memberId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "members",
+                "{{memberId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Teachers",
+      "item": [
+        {
+          "name": "List Teachers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/teachers?academyId={{academyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "teachers"
+              ],
+              "query": [
+                {
+                  "key": "academyId",
+                  "value": "{{academyId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Marina Andrade\",\n  \"email\": \"marina.andrade@gym.io\",\n  \"phone\": \"+5511977771111\",\n  \"cpf\": \"98765432100\",\n  \"birthDate\": \"1990-02-10\",\n  \"password\": \"teacher123\",\n  \"academyId\": \"{{academyId}}\",\n  \"specialization\": \"Treinos híbridos\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/teachers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "teachers"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "List Plans by Academy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/plans/academy/{{academyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "plans",
+                "academy",
+                "{{academyId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academyId\": \"{{academyId}}\",\n  \"name\": \"Plano Premium\",\n  \"description\": \"Acesso completo + personal\",\n  \"price\": 199.90,\n  \"billingPeriodInMonths\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/v1/plans",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "plans"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Plan By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/plans/{{planId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "plans",
+                "{{planId}}"
+              ]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -234,6 +519,18 @@
     },
     {
       "key": "cnpj",
+      "value": ""
+    },
+    {
+      "key": "planId",
+      "value": ""
+    },
+    {
+      "key": "memberId",
+      "value": ""
+    },
+    {
+      "key": "active",
       "value": ""
     },
     {

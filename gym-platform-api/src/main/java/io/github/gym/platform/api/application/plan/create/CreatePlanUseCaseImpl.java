@@ -43,7 +43,3 @@ public class CreatePlanUseCaseImpl implements CreatePlanUseCase {
         return PlanOutput.from(saved);
     }
 }
-
-
-
-

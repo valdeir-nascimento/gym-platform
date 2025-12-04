@@ -21,13 +21,8 @@ public class ListPlansByAcademyUseCaseImpl implements ListPlansByAcademyUseCase 
     @Override
     public List<PlanOutput> execute(final ListPlansByAcademyQuery query) {
         final var academyId = AcademyID.from(query.academyId());
-        return planGateway.findAllByAcademy(academyId)
-            .stream()
+        return planGateway.findAllByAcademy(academyId).stream()
             .map(PlanOutput::from)
             .toList();
     }
 }
-
-
-
-

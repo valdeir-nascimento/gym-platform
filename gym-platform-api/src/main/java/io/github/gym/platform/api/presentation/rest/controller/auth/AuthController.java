@@ -1,5 +1,7 @@
 package io.github.gym.platform.api.presentation.rest.controller.auth;
 
+import io.github.gym.platform.api.application.academy.retrieve.ListAcademiesUseCase;
+import io.github.gym.platform.api.application.academy.retrieve.query.ListAcademiesQuery;
 import io.github.gym.platform.api.application.user.UserAccountOutput;
 import io.github.gym.platform.api.application.user.authenticate.AuthenticateUserUseCase;
 import io.github.gym.platform.api.application.user.authenticate.command.AuthenticateUserCommand;
@@ -27,13 +29,16 @@ public class AuthController {
 
     private final RegisterUserUseCase registerUserUseCase;
     private final AuthenticateUserUseCase authenticateUserUseCase;
+    private final ListAcademiesUseCase listAcademiesUseCase;
 
     public AuthController(
         final RegisterUserUseCase registerUserUseCase,
-        final AuthenticateUserUseCase authenticateUserUseCase
+        final AuthenticateUserUseCase authenticateUserUseCase,
+        final ListAcademiesUseCase listAcademiesUseCase
     ) {
         this.registerUserUseCase = registerUserUseCase;
         this.authenticateUserUseCase = authenticateUserUseCase;
+        this.listAcademiesUseCase = listAcademiesUseCase;
     }
 
     @PostMapping("/register")
@@ -42,6 +47,8 @@ public class AuthController {
             request.fullName(),
             request.email(),
             request.phone(),
+            request.cpf(),
+            request.birthDate(),
             request.password(),
             request.roles()
         );
@@ -65,7 +72,8 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(UserProfileResponse.from(user));
+        final var academies = listAcademiesUseCase.execute(ListAcademiesQuery.all());
+        return ResponseEntity.ok(UserProfileResponse.from(user, academies));
     }
 }
 

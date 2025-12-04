@@ -1,15 +1,17 @@
 package io.github.gym.platform.api.domain.user;
 
-import java.util.Optional;
-
 public interface UserAccountGateway {
 
     UserAccount save(UserAccount account);
 
-    Optional<UserAccount> findByEmail(String email);
+    UserAccount findByEmail(String email);
+
+    UserAccount findByCpf(String cpf);
 
     boolean existsByEmail(String email);
 
-    Optional<UserAccount> findById(UserAccountID id);
+    boolean existsByCpf(String cpf);
+
+    UserAccount findById(UserAccountID id);
 }
 

@@ -57,9 +57,6 @@ public class Teacher extends AggregateRoot<TeacherID> {
         );
     }
 
-    /**
-     * Factory method to rehydrate an existing Teacher from persistence.
-     */
     public static Teacher with(
         final TeacherID id,
         final UserAccountID userAccountId,

@@ -10,6 +10,10 @@ public interface UserAccountJpaRepository extends JpaRepository<UserAccountEntit
 
     Optional<UserAccountEntity> findByEmailIgnoreCase(String email);
 
+    Optional<UserAccountEntity> findByCpf(String cpf);
+
     boolean existsByEmailIgnoreCase(String email);
+
+    boolean existsByCpf(String cpf);
 }
 

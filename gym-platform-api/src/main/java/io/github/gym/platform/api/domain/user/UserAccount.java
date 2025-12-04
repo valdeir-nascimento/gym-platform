@@ -1,19 +1,22 @@
 package io.github.gym.platform.api.domain.user;
 
-import io.github.gym.platform.api.domain.core.AggregateRoot;
-import io.github.gym.platform.api.domain.validation.ValidationHandler;
-
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import io.github.gym.platform.api.domain.core.AggregateRoot;
+import io.github.gym.platform.api.domain.validation.ValidationHandler;
 
 public class UserAccount extends AggregateRoot<UserAccountID> {
 
     private final String fullName;
     private final String email;
     private final String phone;
+    private final String cpf;
+    private final LocalDate birthDate;
     private final String password;
     private final boolean active;
     private final Set<UserRole> roles;
@@ -25,6 +28,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         final String fullName,
         final String email,
         final String phone,
+        final String cpf,
+        final LocalDate birthDate,
         final String password,
         final boolean active,
         final Set<UserRole> roles,
@@ -35,6 +40,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
+        this.cpf = cpf;
+        this.birthDate = birthDate;
         this.password = password;
         this.active = active;
         this.roles = Collections.unmodifiableSet(new HashSet<>(roles != null ? roles : Set.of()));
@@ -46,6 +53,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         final String fullName,
         final String email,
         final String phone,
+        final String cpf,
+        final LocalDate birthDate,
         final String password,
         final Set<UserRole> roles
     ) {
@@ -59,6 +68,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
             fullName,
             email,
             phone,
+            cpf,
+            birthDate,
             password,
             true,
             effectiveRoles,
@@ -72,6 +83,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         final String fullName,
         final String email,
         final String phone,
+        final String cpf,
+        final LocalDate birthDate,
         final String password,
         final boolean active,
         final Set<UserRole> roles,
@@ -83,6 +96,8 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
             fullName,
             email,
             phone,
+            cpf,
+            birthDate,
             password,
             active,
             roles != null ? roles : Set.of(),
@@ -108,6 +123,14 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
         return phone;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -126,6 +149,28 @@ public class UserAccount extends AggregateRoot<UserAccountID> {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public UserAccount updateProfile(
+        final String fullName,
+        final String email,
+        final String phone,
+        final String cpf,
+        final LocalDate birthDate
+    ) {
+        return new UserAccount(
+            getId(),
+            fullName,
+            email,
+            phone,
+            cpf,
+            birthDate,
+            password,
+            active,
+            roles,
+            createdAt,
+            Instant.now()
+        );
     }
 
 }

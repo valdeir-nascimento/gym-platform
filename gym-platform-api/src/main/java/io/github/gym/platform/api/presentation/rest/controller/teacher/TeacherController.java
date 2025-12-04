@@ -51,6 +51,8 @@ public class TeacherController {
             request.fullName(),
             request.email(),
             request.phone(),
+            request.cpf(),
+            request.birthDate(),
             request.password(),
             request.academyId(),
             request.specialization()
@@ -58,7 +60,7 @@ public class TeacherController {
 
         final var output = registerTeacherUseCase.execute(command);
         final var location = ApiUriFactory.createdLocation("/teachers/{teacherId}", output.id());
-        return ResponseEntity.created(location).body(TeacherResponse.from(output));
+        return ResponseEntity.created(location).body(TeacherResponse.from(null));
     }
 }
 

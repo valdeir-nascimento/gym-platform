@@ -85,6 +85,24 @@ public class Member extends AggregateRoot<MemberID> {
         new MemberValidator(this, handler).validate();
     }
 
+    public Member update(
+        final UserAccountID newUserAccountId,
+        final PlanID newPlanId,
+        final MemberStatus newStatus
+    ) {
+        return new Member(
+            this.getId(),
+            newUserAccountId != null ? newUserAccountId : this.userAccountId,
+            this.academyId,
+            newPlanId != null ? newPlanId : this.planId,
+            newStatus != null ? newStatus : this.status,
+            this.joinedAt,
+            this.createdAt,
+            Instant.now()
+        );
+    }
+
+
     public UserAccountID getUserAccountId() {
         return userAccountId;
     }
@@ -112,4 +130,5 @@ public class Member extends AggregateRoot<MemberID> {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+
 }

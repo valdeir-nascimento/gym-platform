@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,18 +37,20 @@ public class PlanEntity {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Long version;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan", fetch = FetchType.LAZY)
+    private List<MemberJpaEntity> members;
+
+    @JoinColumn(name = "academy_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private AcademyEntity academy;
+
     protected PlanEntity() {
-        // JPA only
     }
 
     public UUID getId() {
@@ -106,16 +109,28 @@ public class PlanEntity {
         this.active = active;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<MemberJpaEntity> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<MemberJpaEntity> members) {
+        this.members = members;
+    }
+
+    public AcademyEntity getAcademy() {
+        return academy;
+    }
+
+    public void setAcademy(AcademyEntity academy) {
+        this.academy = academy;
     }
 
     @Override
@@ -136,10 +151,6 @@ public class PlanEntity {
         final var now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
-
-        if (this.version == null) {
-            this.version = 0L;
-        }
 
         if (!this.active) {
             this.active = true;

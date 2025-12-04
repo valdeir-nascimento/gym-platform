@@ -12,3 +12,4 @@ public interface ListPlansByAcademyUseCase extends QueryUseCase<ListPlansByAcade
 
 
 
+

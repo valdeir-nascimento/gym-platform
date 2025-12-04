@@ -1,17 +1,16 @@
 package io.github.gym.platform.api.domain.member;
 
+import io.github.gym.platform.api.application.member.MemberItemOutput;
+import io.github.gym.platform.api.domain.academy.AcademyID;
+
 import java.util.List;
-import java.util.UUID;
 
 public interface MemberGateway {
 
     Member save(Member member);
 
-    Member findById(MemberID id);
+    Member findById(MemberID academyId);
 
-    Member findByUserAndAcademy(UUID userAccountId, UUID academyId);
+    List<MemberItemOutput> findMembersByAcademyId(AcademyID academyId);
 
-    boolean existsByUserAndAcademy(UUID userAccountId, UUID academyId);
-
-    List<Member> findAll();
 }

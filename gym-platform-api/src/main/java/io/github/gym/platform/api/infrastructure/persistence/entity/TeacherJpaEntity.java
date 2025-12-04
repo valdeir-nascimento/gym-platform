@@ -1,9 +1,11 @@
 package io.github.gym.platform.api.infrastructure.persistence.entity;
 
+import io.github.gym.platform.api.domain.academy.Academy;
 import io.github.gym.platform.api.domain.academy.AcademyID;
 import io.github.gym.platform.api.domain.teacher.Teacher;
 import io.github.gym.platform.api.domain.teacher.TeacherID;
 import io.github.gym.platform.api.domain.teacher.TeacherStatus;
+import io.github.gym.platform.api.domain.user.UserAccount;
 import io.github.gym.platform.api.domain.user.UserAccountID;
 import jakarta.persistence.*;
 
@@ -32,12 +34,6 @@ public class TeacherJpaEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "user_account_id", nullable = false)
-    private UUID userAccountId;
-
-    @Column(name = "academy_id", nullable = false)
-    private UUID academyId;
-
     @Column(name = "specialization", nullable = false, length = 255)
     private String specialization;
 
@@ -45,22 +41,30 @@ public class TeacherJpaEntity {
     @Column(name = "status", nullable = false, length = 20)
     private TeacherStatus status;
 
-    @Column(name = "hired_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
+    @Column(name = "hired_at", nullable = false)
     private Instant hiredAt;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
+    @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @JoinColumn(name = "academy_id", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private AcademyEntity academy;
+
+    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private UserAccountEntity userAccount;
 
     protected TeacherJpaEntity() {
     }
 
     private TeacherJpaEntity(
         final UUID id,
-        final UUID userAccountId,
-        final UUID academyId,
+        final UserAccountEntity userAccount,
+        final AcademyEntity academy,
         final String specialization,
         final TeacherStatus status,
         final Instant hiredAt,
@@ -68,8 +72,8 @@ public class TeacherJpaEntity {
         final Instant updatedAt
     ) {
         this.id = id;
-        this.userAccountId = userAccountId;
-        this.academyId = academyId;
+        this.userAccount = userAccount;
+        this.academy = academy;
         this.specialization = specialization;
         this.status = status;
         this.hiredAt = hiredAt;
@@ -79,14 +83,6 @@ public class TeacherJpaEntity {
 
     public UUID getId() {
         return id;
-    }
-
-    public UUID getUserAccountId() {
-        return userAccountId;
-    }
-
-    public UUID getAcademyId() {
-        return academyId;
     }
 
     public String getSpecialization() {
@@ -109,6 +105,22 @@ public class TeacherJpaEntity {
         return updatedAt;
     }
 
+    public AcademyEntity getAcademy() {
+        return academy;
+    }
+
+    public void setAcademy(AcademyEntity academy) {
+        this.academy = academy;
+    }
+
+    public UserAccountEntity getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccountEntity userAccount) {
+        this.userAccount = userAccount;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -122,11 +134,15 @@ public class TeacherJpaEntity {
         return Objects.hash(id);
     }
 
-    public static TeacherJpaEntity from(final Teacher teacher) {
+    public static TeacherJpaEntity from(
+        final Teacher teacher,
+        final UserAccount userAccount,
+        final Academy academy
+    ) {
         return new TeacherJpaEntity(
             teacher.getId().getValue(),
-            teacher.getUserAccountId().getValue(),
-            teacher.getAcademyId().getValue(),
+            UserAccountEntity.from(userAccount),
+            AcademyEntity.from(academy),
             teacher.getSpecialization(),
             teacher.getStatus(),
             teacher.getHiredAt(),
@@ -138,8 +154,8 @@ public class TeacherJpaEntity {
     public Teacher toAggregate() {
         return Teacher.with(
             TeacherID.from(id.toString()),
-            UserAccountID.from(userAccountId.toString()),
-            AcademyID.from(academyId.toString()),
+            UserAccountID.from(userAccount.getId()),
+            AcademyID.from(academy.getId()),
             specialization,
             status,
             hiredAt,

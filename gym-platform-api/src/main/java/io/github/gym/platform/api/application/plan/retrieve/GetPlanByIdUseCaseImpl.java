@@ -23,7 +23,3 @@ public class GetPlanByIdUseCaseImpl implements GetPlanByIdUseCase {
         return PlanOutput.from(plan);
     }
 }
-
-
-
-

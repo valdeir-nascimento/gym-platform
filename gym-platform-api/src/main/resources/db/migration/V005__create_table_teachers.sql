@@ -23,9 +23,9 @@ CREATE INDEX idx_teachers_status ON teachers (status);
 ALTER TABLE teachers
     ADD CONSTRAINT fk_teachers_user_account
         FOREIGN KEY (user_account_id)
-            REFERENCES user_accounts (id);
+            REFERENCES user_account (id);
 
 ALTER TABLE teachers
     ADD CONSTRAINT fk_teachers_academy
         FOREIGN KEY (academy_id)
-            REFERENCES academies (id);
+            REFERENCES academy (id);

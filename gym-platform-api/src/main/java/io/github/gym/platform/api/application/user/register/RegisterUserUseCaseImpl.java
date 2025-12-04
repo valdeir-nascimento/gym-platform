@@ -39,6 +39,8 @@ public class RegisterUserUseCaseImpl implements RegisterUserUseCase {
             command.fullName(),
             command.email(),
             command.phone(),
+            command.cpf(),
+            command.birthDate(),
             encodedPassword,
             roles
         );
@@ -49,11 +51,16 @@ public class RegisterUserUseCaseImpl implements RegisterUserUseCase {
             notification.append(Error.of("'email' is already in use"));
         }
 
+        if (command.cpf() != null && userAccountGateway.existsByCpf(command.cpf())) {
+            notification.append(Error.of("'cpf' is already in use"));
+        }
+
         if (notification.hasErrors()) {
             throw DomainException.with(notification.getErrors());
         }
 
         final var saved = userAccountGateway.save(account);
+
         return UserAccountOutput.from(saved);
     }
 

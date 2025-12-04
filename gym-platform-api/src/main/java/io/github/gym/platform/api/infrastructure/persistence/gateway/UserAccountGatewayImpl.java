@@ -1,5 +1,6 @@
 package io.github.gym.platform.api.infrastructure.persistence.gateway;
 
+import io.github.gym.platform.api.domain.exception.NotFoundException;
 import io.github.gym.platform.api.domain.user.UserAccount;
 import io.github.gym.platform.api.domain.user.UserAccountGateway;
 import io.github.gym.platform.api.domain.user.UserAccountID;
@@ -8,38 +9,54 @@ import io.github.gym.platform.api.infrastructure.persistence.repository.UserAcco
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 public class UserAccountGatewayImpl implements UserAccountGateway {
 
-    private final UserAccountJpaRepository repository;
+    private final UserAccountJpaRepository userAccountJpaRepository;
 
-    public UserAccountGatewayImpl(final UserAccountJpaRepository repository) {
-        this.repository = Objects.requireNonNull(repository);
+    public UserAccountGatewayImpl(final UserAccountJpaRepository userAccountJpaRepository) {
+        this.userAccountJpaRepository = Objects.requireNonNull(userAccountJpaRepository);
     }
 
     @Override
     public UserAccount save(final UserAccount account) {
-        final var entity = UserAccountEntity.from(account);
-        final var saved = repository.save(entity);
-        return saved.toAggregate();
+        final var entity = userAccountJpaRepository
+            .findById(account.getId().getValue())
+            .map(user -> user.updateFrom(account))
+            .orElseGet(() -> UserAccountEntity.from(account));  // cria a entidade e deixa o Hibernate persistir
+        return userAccountJpaRepository.save(entity).toAggregate();
     }
 
     @Override
-    public Optional<UserAccount> findByEmail(final String email) {
-        return repository.findByEmailIgnoreCase(email).map(UserAccountEntity::toAggregate);
+    public UserAccount findByEmail(final String email) {
+        return userAccountJpaRepository.findByEmailIgnoreCase(email)
+            .map(UserAccountEntity::toAggregate)
+            .orElseThrow(() -> NotFoundException.with(UserAccount.class, email));
+    }
+
+    @Override
+    public UserAccount findByCpf(final String cpf) {
+        return userAccountJpaRepository.findByCpf(cpf)
+            .map(UserAccountEntity::toAggregate)
+            .orElseThrow(() -> NotFoundException.with(UserAccount.class, cpf));
     }
 
     @Override
     public boolean existsByEmail(final String email) {
-        return repository.existsByEmailIgnoreCase(email);
+        return userAccountJpaRepository.existsByEmailIgnoreCase(email);
     }
 
     @Override
-    public Optional<UserAccount> findById(final UserAccountID id) {
-        return repository.findById(id.getValue())
-            .map(UserAccountEntity::toAggregate);
+    public boolean existsByCpf(final String cpf) {
+        return userAccountJpaRepository.existsByCpf(cpf);
+    }
+
+    @Override
+    public UserAccount findById(final UserAccountID id) {
+        return userAccountJpaRepository.findById(id.getValue())
+            .map(UserAccountEntity::toAggregate)
+            .orElseThrow(() -> NotFoundException.with(UserAccount.class, id.getValue()));
     }
 }
 

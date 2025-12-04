@@ -67,6 +67,8 @@ public class SecurityBootstrap implements ApplicationRunner {
             bootstrap.fullName(),
             bootstrap.email(),
             bootstrap.phone(),
+            bootstrap.cpf(),
+            bootstrap.birthDate(),
             passwordEncoder.encode(bootstrap.password()),
             roles
         );

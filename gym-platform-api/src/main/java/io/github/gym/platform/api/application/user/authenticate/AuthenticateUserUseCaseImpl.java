@@ -29,8 +29,7 @@ public class AuthenticateUserUseCaseImpl implements AuthenticateUserUseCase {
 
     @Override
     public AuthenticationTokenOutput execute(final AuthenticateUserCommand command) {
-        final var account = userAccountGateway.findByEmail(command.email())
-            .orElseThrow(AuthenticationException::invalidCredentials);
+        final var account = userAccountGateway.findByEmail(command.email());
 
         if (!account.isActive()) {
             throw AuthenticationException.invalidCredentials();
@@ -41,6 +40,7 @@ public class AuthenticateUserUseCaseImpl implements AuthenticateUserUseCase {
         }
 
         final JwtToken token = jwtTokenService.generateToken(account);
+
         return new AuthenticationTokenOutput(token.value(), token.expiresAt());
     }
 }

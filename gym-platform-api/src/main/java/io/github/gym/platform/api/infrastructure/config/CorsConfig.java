@@ -14,7 +14,7 @@ public class CorsConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
-        @Value("${app.cors.allowed-origins:http://localhost:4200}") final List<String> allowedOrigins,
+        @Value("${app.cors.allowed-origins:http://localhost:8081}") final List<String> allowedOrigins,
         @Value("${app.cors.allowed-methods:GET,POST,PUT,PATCH,DELETE,OPTIONS}") final List<String> allowedMethods,
         @Value("${app.cors.allowed-headers:*}") final List<String> allowedHeaders,
         @Value("${app.cors.allow-credentials:true}") final boolean allowCredentials

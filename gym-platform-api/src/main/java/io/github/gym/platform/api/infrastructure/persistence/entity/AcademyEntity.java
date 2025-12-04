@@ -5,6 +5,7 @@ import io.github.gym.platform.api.domain.academy.AcademyID;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,15 +35,20 @@ public class AcademyEntity {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Long version;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "academy", fetch = FetchType.LAZY)
+    private List<MemberJpaEntity> members;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "academy", fetch = FetchType.LAZY)
+    private List<TeacherJpaEntity> teachers;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "academy", fetch = FetchType.LAZY)
+    private List<PlanEntity> plans;
 
     protected AcademyEntity() {
     }
@@ -103,16 +109,36 @@ public class AcademyEntity {
         this.active = active;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<MemberJpaEntity> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<MemberJpaEntity> members) {
+        this.members = members;
+    }
+
+    public List<TeacherJpaEntity> getTeachers() {
+        return teachers;
+    }
+
+    public void setTeachers(List<TeacherJpaEntity> teachers) {
+        this.teachers = teachers;
+    }
+
+    public List<PlanEntity> getPlans() {
+        return plans;
+    }
+
+    public void setPlans(List<PlanEntity> plans) {
+        this.plans = plans;
     }
 
     @Override
@@ -133,10 +159,6 @@ public class AcademyEntity {
         final var now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
-
-        if (this.version == null) {
-            this.version = 0L;
-        }
 
         if (!this.active) {
             this.active = true;

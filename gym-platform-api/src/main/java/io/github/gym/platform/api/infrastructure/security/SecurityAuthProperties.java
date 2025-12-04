@@ -3,6 +3,7 @@ package io.github.gym.platform.api.infrastructure.security;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,8 @@ public class SecurityAuthProperties {
         private String fullName = "Admin";
         private String email = "admin@gym.io";
         private String phone;
+        private String cpf = "00000000000";
+        private LocalDate birthDate = LocalDate.of(1990, 1, 1);
         private String password = "changeit";
         private List<String> roles = new ArrayList<>(List.of("ADMIN"));
 
@@ -92,6 +95,22 @@ public class SecurityAuthProperties {
 
         public void setPhone(final String phone) {
             this.phone = phone;
+        }
+
+        public String cpf() {
+            return cpf;
+        }
+
+        public void setCpf(final String cpf) {
+            this.cpf = cpf;
+        }
+
+        public LocalDate birthDate() {
+            return birthDate;
+        }
+
+        public void setBirthDate(final LocalDate birthDate) {
+            this.birthDate = birthDate;
         }
 
         public String password() {

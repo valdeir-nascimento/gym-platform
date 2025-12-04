@@ -19,6 +19,14 @@ public class UserAccountValidator extends Validator {
             validationHandler().append(io.github.gym.platform.api.domain.validation.Error.of("'username' must not be null or blank"));
         }
 
+        if (userAccount.getCpf() == null || userAccount.getCpf().isBlank()) {
+            validationHandler().append(Error.of("'cpf' must not be null or blank"));
+        }
+
+        if (userAccount.getBirthDate() == null) {
+            validationHandler().append(Error.of("'birthDate' must not be null"));
+        }
+
         if (userAccount.getPassword() == null || userAccount.getPassword().isBlank()) {
             validationHandler().append(Error.of("'password' must not be null or blank"));
         }

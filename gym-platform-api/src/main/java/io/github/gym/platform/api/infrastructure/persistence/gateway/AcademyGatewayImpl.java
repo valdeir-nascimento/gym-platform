@@ -9,6 +9,8 @@ import io.github.gym.platform.api.infrastructure.persistence.repository.AcademyJ
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 public class AcademyGatewayImpl implements AcademyGateway {
 
@@ -48,5 +50,14 @@ public class AcademyGatewayImpl implements AcademyGateway {
     @Transactional(readOnly = true)
     public boolean existsByCnpj(final String cnpj) {
         return academyJpaRepository.existsByCnpj(cnpj);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Academy> findAll() {
+        return academyJpaRepository.findAll()
+            .stream()
+            .map(AcademyEntity::toAggregate)
+            .toList();
     }
 }

@@ -4,6 +4,7 @@ import io.github.gym.platform.api.domain.user.UserAccount;
 import io.github.gym.platform.api.domain.user.UserRole;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 
 public record UserAccountOutput(
@@ -11,6 +12,8 @@ public record UserAccountOutput(
     String fullName,
     String email,
     String phone,
+    String cpf,
+    LocalDate birthDate,
     boolean active,
     Set<UserRole> roles,
     Instant createdAt,
@@ -23,6 +26,8 @@ public record UserAccountOutput(
             account.getFullName(),
             account.getEmail(),
             account.getPhone(),
+            account.getCpf(),
+            account.getBirthDate(),
             account.isActive(),
             Set.copyOf(account.getRoles()),
             account.getCreatedAt(),

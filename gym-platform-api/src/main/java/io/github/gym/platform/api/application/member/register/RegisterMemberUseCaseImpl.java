@@ -1,64 +1,64 @@
 package io.github.gym.platform.api.application.member.register;
 
-import io.github.gym.platform.api.application.member.MemberOutput;
 import io.github.gym.platform.api.application.member.register.command.RegisterMemberCommand;
+import io.github.gym.platform.api.application.plan.retrieve.GetPlanByIdUseCase;
+import io.github.gym.platform.api.application.plan.retrieve.query.GetPlanByIdQuery;
+import io.github.gym.platform.api.application.user.register.RegisterUserUseCase;
+import io.github.gym.platform.api.application.user.register.command.RegisterUserCommand;
+import io.github.gym.platform.api.domain.academy.AcademyID;
 import io.github.gym.platform.api.domain.exception.DomainException;
-import io.github.gym.platform.api.domain.exception.NotFoundException;
 import io.github.gym.platform.api.domain.member.Member;
 import io.github.gym.platform.api.domain.member.MemberGateway;
-import io.github.gym.platform.api.domain.plan.Plan;
-import io.github.gym.platform.api.domain.plan.PlanGateway;
 import io.github.gym.platform.api.domain.plan.PlanID;
-import io.github.gym.platform.api.domain.user.UserAccount;
-import io.github.gym.platform.api.domain.user.UserAccountGateway;
+import io.github.gym.platform.api.domain.user.UserAccountID;
 import io.github.gym.platform.api.domain.user.UserRole;
-import io.github.gym.platform.api.domain.validation.Error;
 import io.github.gym.platform.api.domain.validation.handler.Notification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class RegisterMemberUseCaseImpl implements RegisterMemberUseCase {
 
     private final MemberGateway memberGateway;
-    private final UserAccountGateway userAccountGateway;
-    private final PlanGateway planGateway;
-    private final PasswordEncoder passwordEncoder;
+    private final GetPlanByIdUseCase getPlanByIdUseCase;
+    private final RegisterUserUseCase registerUserUseCase;
 
     public RegisterMemberUseCaseImpl(
         final MemberGateway memberGateway,
-        final UserAccountGateway userAccountGateway,
-        final PlanGateway planGateway,
-        final PasswordEncoder passwordEncoder
+        final GetPlanByIdUseCase getPlanByIdUseCase,
+        final RegisterUserUseCase registerUserUseCase
     ) {
         this.memberGateway = Objects.requireNonNull(memberGateway);
-        this.userAccountGateway = Objects.requireNonNull(userAccountGateway);
-        this.planGateway = Objects.requireNonNull(planGateway);
-        this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
+        this.getPlanByIdUseCase = Objects.requireNonNull(getPlanByIdUseCase);
+        this.registerUserUseCase = Objects.requireNonNull(registerUserUseCase);
     }
 
     @Override
-    public MemberOutput execute(final RegisterMemberCommand command) {
+    public MemberRegisterOutput execute(final RegisterMemberCommand command) {
         final var notification = Notification.create();
 
-        final var plan = resolvePlan(command.planId(), notification);
-        final var user = resolveUser(command, notification);
+        final var userCommand = RegisterUserCommand.with(
+            command.fullName(),
+            command.email(),
+            command.phone(),
+            command.cpf(),
+            command.birthDate(),
+            command.password(),
+            Set.of(UserRole.MEMBER.name())
+        );
 
-        if (notification.hasErrors() || plan == null || user == null) {
-            throw DomainException.with(notification.getErrors());
-        }
+        final var userOutput = registerUserUseCase.execute(userCommand);
 
-        final var academyId = plan.getAcademyId();
+        final var planOutput = getPlanByIdUseCase.execute(GetPlanByIdQuery.with(command.planId()));
 
-        if (memberGateway.existsByUserAndAcademy(user.getId().getValue(), academyId.getValue())) {
-            notification.append(Error.of("Member already registered for this academy"));
-        }
+        final var member = Member.newMember(
+            UserAccountID.from(userOutput.id()),
+            AcademyID.from(planOutput.academyId()),
+            PlanID.from(planOutput.id())
+        );
 
-        final var member = Member.newMember(user.getId(), academyId, plan.getId());
         member.validate(notification);
 
         if (notification.hasErrors()) {
@@ -66,64 +66,8 @@ public class RegisterMemberUseCaseImpl implements RegisterMemberUseCase {
         }
 
         final var saved = memberGateway.save(member);
-        return MemberOutput.from(saved, user, plan);
-    }
 
-    private Plan resolvePlan(final String rawPlanId, final Notification notification) {
-        if (rawPlanId == null || rawPlanId.isBlank()) {
-            notification.append(Error.of("'planId' must not be null or blank"));
-            return null;
-        }
-
-        final PlanID planId;
-        try {
-            planId = PlanID.from(rawPlanId);
-        } catch (final IllegalArgumentException ex) {
-            notification.append(Error.of("'planId' must be a valid UUID"));
-            return null;
-        }
-
-        try {
-            return planGateway.findById(planId);
-        } catch (final NotFoundException ex) {
-            notification.append(Error.of("Plan '%s' was not found".formatted(rawPlanId)));
-            return null;
-        }
-    }
-
-    private UserAccount resolveUser(final RegisterMemberCommand command, final Notification notification) {
-        final var existing = userAccountGateway.findByEmail(command.email());
-        if (existing.isPresent()) {
-            return existing.get();
-        }
-
-        final var password = resolvePassword(command);
-
-        final var account = UserAccount.newAccount(
-            command.fullName(),
-            command.email(),
-            command.phone(),
-            passwordEncoder.encode(password),
-            Set.of(UserRole.MEMBER)
-        );
-
-        account.validate(notification);
-
-        if (notification.hasErrors()) {
-            return null;
-        }
-
-        return userAccountGateway.save(account);
-    }
-
-    private String resolvePassword(final RegisterMemberCommand command) {
-        if (command.password() != null && !command.password().isBlank()) {
-            return command.password();
-        }
-        if (command.phone() != null && !command.phone().isBlank()) {
-            return command.phone();
-        }
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return MemberRegisterOutput.from(saved, userOutput, planOutput);
     }
 }
 
