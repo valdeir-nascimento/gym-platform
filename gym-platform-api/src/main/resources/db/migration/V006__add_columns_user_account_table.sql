@@ -1,0 +1,3 @@
+ALTER TABLE user_account
+    ADD COLUMN IF NOT EXISTS cpf VARCHAR (14),
+    ADD COLUMN IF NOT EXISTS birth_date DATE;
