@@ -70,4 +70,12 @@ public class MemberGatewayImpl implements MemberGateway {
             .map(MemberItemOutput::from)
             .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void existById(MemberID id) {
+        if (!memberJpaRepository.existsById(id.getValue())) {
+            throw NotFoundException.with(Member.class, id.getValue());
+        }
+    }
 }

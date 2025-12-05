@@ -13,4 +13,6 @@ public interface MemberGateway {
 
     List<MemberItemOutput> findMembersByAcademyId(AcademyID academyId);
 
+    void existById(MemberID id);
+
 }

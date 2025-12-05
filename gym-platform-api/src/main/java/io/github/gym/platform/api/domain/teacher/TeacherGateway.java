@@ -11,4 +11,6 @@ public interface TeacherGateway {
     Teacher findById(TeacherID id);
 
     List<Teacher> findAllByAcademy(AcademyID academyId);
+
+    void existById(TeacherID id);
 }

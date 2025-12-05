@@ -10,6 +10,7 @@ import io.github.gym.platform.api.domain.user.UserAccountGateway;
 import io.github.gym.platform.api.infrastructure.persistence.entity.TeacherJpaEntity;
 import io.github.gym.platform.api.infrastructure.persistence.repository.TeacherJpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,5 +52,13 @@ public class TeacherGatewayImpl implements TeacherGateway {
         return teacherRepository.findAllByAcademyId(academyId.getValue()).stream()
             .map(TeacherJpaEntity::toAggregate)
             .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void existById(TeacherID id) {
+        if (!teacherRepository.existsById(id.getValue())) {
+            throw NotFoundException.with(Teacher.class, id.getValue());
+        }
     }
 }

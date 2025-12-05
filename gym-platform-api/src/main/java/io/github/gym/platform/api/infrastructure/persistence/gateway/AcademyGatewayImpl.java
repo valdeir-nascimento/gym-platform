@@ -60,4 +60,12 @@ public class AcademyGatewayImpl implements AcademyGateway {
             .map(AcademyEntity::toAggregate)
             .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void existById(AcademyID id) {
+        if (!academyJpaRepository.existsById(id.getValue())) {
+            throw NotFoundException.with(Academy.class, id.getValue());
+        }
+    }
 }

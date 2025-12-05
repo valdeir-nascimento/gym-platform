@@ -13,4 +13,6 @@ public interface AcademyGateway {
     boolean existsByCnpj(String cnpj);
 
     List<Academy> findAll();
+
+    void existById(AcademyID id);
 }
