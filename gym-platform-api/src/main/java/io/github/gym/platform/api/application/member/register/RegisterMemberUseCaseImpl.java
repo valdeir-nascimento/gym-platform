@@ -6,7 +6,7 @@ import io.github.gym.platform.api.application.plan.retrieve.query.GetPlanByIdQue
 import io.github.gym.platform.api.application.user.register.RegisterUserUseCase;
 import io.github.gym.platform.api.application.user.register.command.RegisterUserCommand;
 import io.github.gym.platform.api.domain.academy.AcademyID;
-import io.github.gym.platform.api.domain.exception.DomainException;
+import io.github.gym.platform.api.domain.exception.NotificationException;
 import io.github.gym.platform.api.domain.member.Member;
 import io.github.gym.platform.api.domain.member.MemberGateway;
 import io.github.gym.platform.api.domain.plan.PlanID;
@@ -62,7 +62,7 @@ public class RegisterMemberUseCaseImpl implements RegisterMemberUseCase {
         member.validate(notification);
 
         if (notification.hasErrors()) {
-            throw DomainException.with(notification.getErrors());
+            throw NotificationException.with(notification.getErrors());
         }
 
         final var saved = memberGateway.save(member);
