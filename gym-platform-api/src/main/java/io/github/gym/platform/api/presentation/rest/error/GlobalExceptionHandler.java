@@ -3,6 +3,7 @@ package io.github.gym.platform.api.presentation.rest.error;
 import io.github.gym.platform.api.domain.exception.AuthenticationException;
 import io.github.gym.platform.api.domain.exception.DomainException;
 import io.github.gym.platform.api.domain.exception.NotFoundException;
+import io.github.gym.platform.api.domain.exception.NotificationException;
 import io.github.gym.platform.api.domain.validation.Error;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.core.NestedExceptionUtils;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = DomainException.class)
     public ResponseEntity<ApiError> handleDomainException(final DomainException ex) {
         return ResponseEntity.unprocessableEntity().body(ApiError.from(ex));
+    }
+
+    @ExceptionHandler(NotificationException.class)
+    public ResponseEntity<ApiError> handleNotificationException(NotificationException ex) {
+        return ResponseEntity
+            .status(HttpStatus.UNPROCESSABLE_ENTITY) // 422
+            .body(ApiError.from(ex));
     }
 
     @ExceptionHandler(value = NotFoundException.class)
